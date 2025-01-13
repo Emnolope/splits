@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta chaset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Icons and Colors -->
+	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+	<link rel="manifest" href="./manifest.json">
+	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#000000">
+	<link rel="shortcut icon" href="./favicon.ico">
+	<meta name="msapplication-TileColor" content="#000000">
+	<meta name="msapplication-TileImage" content="./mstile-144x144.png">
+	<meta name="msapplication-config" content="./browserconfig.xml">
+	<meta name="theme-color" content="#000000">
+  
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
+      });
+    }
+  </script>
+  <title>Folding Code Editor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/codemirror.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldgutter.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/codemirror.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/mode/javascript/javascript.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldgutter.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/brace-fold.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/indent-fold.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/search/search.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/search/searchcursor.js"></script>
+</head>
+<style>
+    .CodeMirror {
+       height: 100vh;
+       font-family: Courier New, monospace;
+       font-size: 16px;
+    }
+</style>
+<body>
+  <script>
+    // Create the textarea dynamically
+    const textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+
+    function indentFold(cm, start) {
+      const tabSize = cm.getOption("tabSize");
+      const firstLine = cm.getLine(start.line);
+      const firstIndent = CodeMirror.countColumn(firstLine, null, tabSize);
+      let lastLineNo = cm.lastLine();
+      let end = start.line;
+      let hasIndentedLines = false;
+
+      while (++end <= lastLineNo) {
+        let line = cm.getLine(end);
+        let indent = CodeMirror.countColumn(line, null, tabSize);
+        if (indent <= firstIndent) break;
+        if (indent > firstIndent) hasIndentedLines = true;
+      }
+
+      if (!hasIndentedLines) return null;
+
+      return {
+        from: CodeMirror.Pos(start.line, firstLine.length),
+        to: CodeMirror.Pos(end - 1, cm.getLine(end - 1).length)
+      };
+    }
+
+    // Apply CodeMirror to the textarea
+    const editor = CodeMirror.fromTextArea(textarea, {
+      mode: "javascript",
+      lineNumbers: true,
+      lineWrapping: true,
+      extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      foldOptions: { rangeFinder: indentFold }
+    });
+    editor.on('paste', function(editor, event) {
+      var pastedData = event.clipboardData || window.clipboardData;
+      if(pastedData) {
+        var pastedText = pastedData.getData('Text');
+        event.preventDefault();
+        event.stopPropagation();
+        editor.replaceSelection(pastedText);
+      }
+    });
+    // Function to save content to localStorage
+    function saveContent() {
+      const content = editor.getValue();
+      try {
+        localStorage.setItem('content', content);
+        //console.log('Content saved:', content); // Debug log
+      } catch (e) {
+        console.error('Error saving to localStorage:', e);
+      }
+    }
+    editor.on('change', saveContent);
+    function initializeEditor() {
+      const savedContent = localStorage.getItem('content');
+      const initialContent = savedContent || "a\nb\nc\nFold 1\n    abc\n    Fold 2\n        def\n        ghi\njkl";
+      editor.setValue(initialContent);
+    }
+    // Replace your window.addEventListener('load', loadContent) with:
+    window.addEventListener('load', initializeEditor);
+  </script>
+  <style>
+    .CodeMirror {
+      height: 100vh !important;
+    }
+  </style>
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
+</body>

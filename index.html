@@ -40,6 +40,9 @@
         position: absolute;
         font-size: 10px;
       }
+      .layout-0 .textarea1 { top: 0; left: 0; width: 100%; height: 100%; }
+      .layout-0 .textarea2 { top: 0; left: 0; width: 0%; height: 0%; }
+      .layout-0 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
       .layout-1 .textarea1 { top: 0; left: 0; width: 100%; height: 33.33%; }
       .layout-1 .textarea2 { top: 33.33%; left: 0; width: 100%; height: 33.33%; }
       .layout-1 .textarea3 { top: 66.66%; left: 0; width: 100%; height: 33.33%; }
@@ -88,12 +91,12 @@
     <script>
       const container = document.getElementById('container');
       const toggleButton = document.getElementById('toggle-button');
-      let currentLayout = 1;
+      let currentLayout = 0;
       container.classList.add(`layout-${currentLayout}`);
             toggleButton.addEventListener('click', () => {
         currentLayout++;
         if (currentLayout > 8)
-          currentLayout = 1;
+          currentLayout = 0;
         container.className = `layout-${currentLayout}`;
       });
       window.addEventListener('resize', () => {

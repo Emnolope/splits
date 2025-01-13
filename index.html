@@ -1,120 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta chaset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta chaset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Icons and Colors -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#000000">
+    <link rel="shortcut icon" href="./favicon.ico">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="./mstile-144x144.png">
+    <meta name="msapplication-config" content="./browserconfig.xml">
+    <meta name="theme-color" content="#000000">
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
+        });
+      }
+    </script>
+    <title>Splitsies!</title>
 
-	<!-- Icons and Colors -->
-	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-	<link rel="manifest" href="./manifest.json">
-	<link rel="mask-icon" href="./safari-pinned-tab.svg" color="#000000">
-	<link rel="shortcut icon" href="./favicon.ico">
-	<meta name="msapplication-TileColor" content="#000000">
-	<meta name="msapplication-TileImage" content="./mstile-144x144.png">
-	<meta name="msapplication-config" content="./browserconfig.xml">
-	<meta name="theme-color" content="#000000">
-  
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker && navigator.serviceWorker.register("./sw.js");
+
+
+
+
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggleable Text Area Layouts</title>
+    <style>
+      textarea {
+        background-color: #fff;
+        position: absolute;
+        font-size: 10px;
+      }
+      .layout-1 .textarea1 { top: 0; left: 0; width: 100%; height: 33.33%; }
+      .layout-1 .textarea2 { top: 33.33%; left: 0; width: 100%; height: 33.33%; }
+      .layout-1 .textarea3 { top: 66.66%; left: 0; width: 100%; height: 33.33%; }
+      .layout-2 .textarea1 { top: 0; left: 0; width: 33.33%; height: 100%; }
+      .layout-2 .textarea2 { top: 0; left: 33.33%; width: 33.33%; height: 100%; }
+      .layout-2 .textarea3 { top: 0; left: 66.66%; width: 33.33%; height: 100%; }
+      .layout-3 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
+      .layout-3 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
+      .layout-3 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
+      .layout-4 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
+      .layout-4 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
+      .layout-4 .textarea3 { top: 50%; left: 0; width: 100%; height: 50%; }
+      .layout-5 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
+      .layout-5 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
+      .layout-5 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
+      .layout-6 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
+      .layout-6 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
+      .layout-6 .textarea3 { top: 0; left: 50%; width: 50%; height: 100%; }
+      .layout-7 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
+      .layout-7 .textarea2 { top: 0; left: 50%; width: 50%; height: 100%; }
+      .layout-7 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
+      .layout-8 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
+      .layout-8 .textarea2 { top: 50%; left: 0; width: 100%; height: 50%; }
+      .layout-8 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
+      #toggle-button {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 0;
+        background-color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; overflow: hidden;">
+    <div id="container">
+      <textarea id="textarea1" class="textarea1"></textarea>
+      <textarea id="textarea2" class="textarea2"></textarea>
+      <textarea id="textarea3" class="textarea3"></textarea>
+    </div>
+    <button id="toggle-button">🔄</button>
+    <script>
+      const container = document.getElementById('container');
+      const toggleButton = document.getElementById('toggle-button');
+      let currentLayout = 1;
+      container.classList.add(`layout-${currentLayout}`);
+            toggleButton.addEventListener('click', () => {
+        currentLayout++;
+        if (currentLayout > 8)
+          currentLayout = 1;
+        container.className = `layout-${currentLayout}`;
       });
-    }
-  </script>
-  <title>Folding Code Editor</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/codemirror.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldgutter.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/codemirror.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/mode/javascript/javascript.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/foldgutter.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/brace-fold.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/fold/indent-fold.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/search/search.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/addon/search/searchcursor.js"></script>
-</head>
-<style>
-    .CodeMirror {
-       height: 100vh;
-       font-family: Courier New, monospace;
-       font-size: 16px;
-    }
-</style>
-<body>
-  <script>
-    // Create the textarea dynamically
-    const textarea = document.createElement('textarea');
-    document.body.appendChild(textarea);
-
-    function indentFold(cm, start) {
-      const tabSize = cm.getOption("tabSize");
-      const firstLine = cm.getLine(start.line);
-      const firstIndent = CodeMirror.countColumn(firstLine, null, tabSize);
-      let lastLineNo = cm.lastLine();
-      let end = start.line;
-      let hasIndentedLines = false;
-
-      while (++end <= lastLineNo) {
-        let line = cm.getLine(end);
-        let indent = CodeMirror.countColumn(line, null, tabSize);
-        if (indent <= firstIndent) break;
-        if (indent > firstIndent) hasIndentedLines = true;
-      }
-
-      if (!hasIndentedLines) return null;
-
-      return {
-        from: CodeMirror.Pos(start.line, firstLine.length),
-        to: CodeMirror.Pos(end - 1, cm.getLine(end - 1).length)
-      };
-    }
-
-    // Apply CodeMirror to the textarea
-    const editor = CodeMirror.fromTextArea(textarea, {
-      mode: "javascript",
-      lineNumbers: true,
-      lineWrapping: true,
-      extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
-      foldGutter: true,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-      foldOptions: { rangeFinder: indentFold }
-    });
-    editor.on('paste', function(editor, event) {
-      var pastedData = event.clipboardData || window.clipboardData;
-      if(pastedData) {
-        var pastedText = pastedData.getData('Text');
-        event.preventDefault();
-        event.stopPropagation();
-        editor.replaceSelection(pastedText);
-      }
-    });
-    // Function to save content to localStorage
-    function saveContent() {
-      const content = editor.getValue();
-      try {
-        localStorage.setItem('content', content);
-        //console.log('Content saved:', content); // Debug log
-      } catch (e) {
-        console.error('Error saving to localStorage:', e);
-      }
-    }
-    editor.on('change', saveContent);
-    function initializeEditor() {
-      const savedContent = localStorage.getItem('content');
-      const initialContent = savedContent || "a\nb\nc\nFold 1\n    abc\n    Fold 2\n        def\n        ghi\njkl";
-      editor.setValue(initialContent);
-    }
-    // Replace your window.addEventListener('load', loadContent) with:
-    window.addEventListener('load', initializeEditor);
-  </script>
-  <style>
-    .CodeMirror {
-      height: 100vh !important;
-    }
-  </style>
-  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
-  <script>eruda.init();</script>
-</body>
+      window.addEventListener('resize', () => {
+        let vh;
+        if (window.visualViewport) {
+          vh = window.visualViewport.height * 0.01;
+        } else {
+          vh = window.innerHeight * 0.01;
+        }
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      });
+      const textarea1 = document.getElementById('textarea1');
+      const textarea2 = document.getElementById('textarea2');
+      const textarea3 = document.getElementById('textarea3');
+      textarea1.value = localStorage.getItem('textarea1') || '';
+      textarea2.value = localStorage.getItem('textarea2') || '';
+      textarea3.value = localStorage.getItem('textarea3') || '';
+      textarea1.addEventListener('input', () => {
+        localStorage.setItem('textarea1', textarea1.value);
+      });
+      textarea2.addEventListener('input', () => {
+        localStorage.setItem('textarea2', textarea2.value);
+      });
+      textarea3.addEventListener('input', () => {
+        localStorage.setItem('textarea3', textarea3.value);
+      });
+    </script>
+  </body>
+</html>

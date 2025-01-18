@@ -25,104 +25,102 @@
     <title>Splitsies!</title>
 
 
-
-
-
-
-
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toggleable Text Area Layouts</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
     <style>
-      textarea {
-        background-color: #fff;
-        position: absolute;
-        font-size: 10px;
-      }
-      .layout-0 .textarea1 { top: 0; left: 0; width: 100%; height: 100%; }
-      .layout-0 .textarea2 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-0 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-1 .textarea1 { top: 0; left: 0; width: 100%; height: 33.33%; }
-      .layout-1 .textarea2 { top: 33.33%; left: 0; width: 100%; height: 33.33%; }
-      .layout-1 .textarea3 { top: 66.66%; left: 0; width: 100%; height: 33.33%; }
-      .layout-2 .textarea1 { top: 0; left: 0; width: 33.33%; height: 100%; }
-      .layout-2 .textarea2 { top: 0; left: 33.33%; width: 33.33%; height: 100%; }
-      .layout-2 .textarea3 { top: 0; left: 66.66%; width: 33.33%; height: 100%; }
-      .layout-3 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
-      .layout-3 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
-      .layout-3 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
-      .layout-4 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
-      .layout-4 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
-      .layout-4 .textarea3 { top: 50%; left: 0; width: 100%; height: 50%; }
-      .layout-5 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
-      .layout-5 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
-      .layout-5 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
-      .layout-6 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
-      .layout-6 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
-      .layout-6 .textarea3 { top: 0; left: 50%; width: 50%; height: 100%; }
-      .layout-7 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
-      .layout-7 .textarea2 { top: 0; left: 50%; width: 50%; height: 100%; }
-      .layout-7 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-8 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
-      .layout-8 .textarea2 { top: 50%; left: 0; width: 100%; height: 50%; }
-      .layout-8 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      #toggle-button {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 0;
-        background-color: #fff;
-        font-size: 24px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body style="margin: 0; padding: 0; overflow: hidden;">
-    <div id="container">
-      <textarea id="textarea1" class="textarea1"></textarea>
-      <textarea id="textarea2" class="textarea2"></textarea>
-      <textarea id="textarea3" class="textarea3"></textarea>
-    </div>
-    <button id="toggle-button">🔄</button>
-    <script>
-      const container = document.getElementById('container');
-      const toggleButton = document.getElementById('toggle-button');
-      let currentLayout = 0;
-      container.classList.add(`layout-${currentLayout}`);
-            toggleButton.addEventListener('click', () => {
-        currentLayout++;
-        if (currentLayout > 8)
-          currentLayout = 0;
-        container.className = `layout-${currentLayout}`;
-      });
-      window.addEventListener('resize', () => {
-        let vh;
-        if (window.visualViewport) {
-          vh = window.visualViewport.height * 0.01;
-        } else {
-          vh = window.innerHeight * 0.01;
+        html, body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-      });
-      const textarea1 = document.getElementById('textarea1');
-      const textarea2 = document.getElementById('textarea2');
-      const textarea3 = document.getElementById('textarea3');
-      textarea1.value = localStorage.getItem('textarea1') || '';
-      textarea2.value = localStorage.getItem('textarea2') || '';
-      textarea3.value = localStorage.getItem('textarea3') || '';
-      textarea1.addEventListener('input', () => {
-        localStorage.setItem('textarea1', textarea1.value);
-      });
-      textarea2.addEventListener('input', () => {
-        localStorage.setItem('textarea2', textarea2.value);
-      });
-      textarea3.addEventListener('input', () => {
-        localStorage.setItem('textarea3', textarea3.value);
-      });
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        .horizontal {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+        }
+        .vertical {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        .split {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .gutter {
+            background-color: #eee;
+            position: relative;
+        }
+        .gutter:hover {
+            background-color: #ddd;
+        }
+        .gutter.gutter-horizontal {
+            cursor: col-resize;
+            width: 8px;
+        }
+        .gutter.gutter-vertical {
+            cursor: row-resize;
+            height: 8px;
+        }
+        #toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="split-container" class="horizontal">
+            <div class="split">
+                <textarea id="left"></textarea>
+            </div>
+            <div class="split">
+                <textarea id="right"></textarea>
+            </div>
+        </div>
+    </div>
+    <button id="toggle">Toggle Split</button>
+    <script>
+        let currentSplit = null;
+        let isHorizontal = true;
+        function initSplit() {
+            if (currentSplit) {
+                currentSplit.destroy();
+            }
+            const container = document.getElementById('split-container');
+            container.className = isHorizontal ? 'horizontal' : 'vertical';
+            currentSplit = Split('.split', {
+                direction: isHorizontal ? 'horizontal' : 'vertical',
+                sizes: [50, 50],
+                minSize: 0,
+                gutterSize: 8,
+            });
+        }
+        document.getElementById('toggle').addEventListener('click', () => {
+            isHorizontal = !isHorizontal;
+            initSplit();
+        });
+        // Initial split
+        initSplit();
     </script>
-  </body>
+</body>
 </html>

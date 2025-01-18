@@ -23,106 +23,216 @@
       }
     </script>
     <title>Splitsies!</title>
-
-
-
-
-
-
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toggleable Text Area Layouts</title>
+    <title>Multi Layout Split</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
     <style>
-      textarea {
-        background-color: #fff;
-        position: absolute;
-        font-size: 10px;
-      }
-      .layout-0 .textarea1 { top: 0; left: 0; width: 100%; height: 100%; }
-      .layout-0 .textarea2 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-0 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-1 .textarea1 { top: 0; left: 0; width: 100%; height: 33.33%; }
-      .layout-1 .textarea2 { top: 33.33%; left: 0; width: 100%; height: 33.33%; }
-      .layout-1 .textarea3 { top: 66.66%; left: 0; width: 100%; height: 33.33%; }
-      .layout-2 .textarea1 { top: 0; left: 0; width: 33.33%; height: 100%; }
-      .layout-2 .textarea2 { top: 0; left: 33.33%; width: 33.33%; height: 100%; }
-      .layout-2 .textarea3 { top: 0; left: 66.66%; width: 33.33%; height: 100%; }
-      .layout-3 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
-      .layout-3 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
-      .layout-3 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
-      .layout-4 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
-      .layout-4 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
-      .layout-4 .textarea3 { top: 50%; left: 0; width: 100%; height: 50%; }
-      .layout-5 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
-      .layout-5 .textarea2 { top: 0; left: 50%; width: 50%; height: 50%; }
-      .layout-5 .textarea3 { top: 50%; left: 50%; width: 50%; height: 50%; }
-      .layout-6 .textarea1 { top: 0; left: 0; width: 50%; height: 50%; }
-      .layout-6 .textarea2 { top: 50%; left: 0; width: 50%; height: 50%; }
-      .layout-6 .textarea3 { top: 0; left: 50%; width: 50%; height: 100%; }
-      .layout-7 .textarea1 { top: 0; left: 0; width: 50%; height: 100%; }
-      .layout-7 .textarea2 { top: 0; left: 50%; width: 50%; height: 100%; }
-      .layout-7 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      .layout-8 .textarea1 { top: 0; left: 0; width: 100%; height: 50%; }
-      .layout-8 .textarea2 { top: 50%; left: 0; width: 100%; height: 50%; }
-      .layout-8 .textarea3 { top: 0; left: 0; width: 0%; height: 0%; }
-      #toggle-button {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 0;
-        background-color: #fff;
-        font-size: 24px;
-        cursor: pointer;
-      }
+        html, body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        .horizontal {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+        }
+        .vertical {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        .split {
+            width: 100%;
+            height: 100%;
+        }
+        .nested-container {
+            width: 100%;
+            height: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            padding: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: #fff;
+        }
+        .gutter {
+            background-color: #eee;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transition: background-color 0.15s ease;
+        }
+        .gutter:hover {
+            background-color: #ddd;
+        }
+        .gutter.gutter-horizontal {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+            cursor: col-resize;
+            width: 10px;
+        }
+        .gutter.gutter-vertical {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+            cursor: row-resize;
+            height: 10px;
+        }
+        #toggle-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #toggle-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        #toggle-button:active {
+            transform: scale(0.95);
+        }
     </style>
-  </head>
-  <body style="margin: 0; padding: 0; overflow: hidden;">
+</head>
+<body>
     <div id="container">
-      <textarea id="textarea1" class="textarea1"></textarea>
-      <textarea id="textarea2" class="textarea2"></textarea>
-      <textarea id="textarea3" class="textarea3"></textarea>
+        <div id="split-container"></div>
     </div>
     <button id="toggle-button">🔄</button>
     <script>
-      const container = document.getElementById('container');
-      const toggleButton = document.getElementById('toggle-button');
-      let currentLayout = 0;
-      container.classList.add(`layout-${currentLayout}`);
-            toggleButton.addEventListener('click', () => {
-        currentLayout++;
-        if (currentLayout > 8)
-          currentLayout = 0;
-        container.className = `layout-${currentLayout}`;
-      });
-      window.addEventListener('resize', () => {
-        let vh;
-        if (window.visualViewport) {
-          vh = window.visualViewport.height * 0.01;
-        } else {
-          vh = window.innerHeight * 0.01;
+        let currentLayout = 0;
+        let splits = [];
+        const textareas = Array(3).fill().map((_, i) => {
+            const textarea = document.createElement('textarea');
+            textarea.id = `textarea${i + 1}`;
+            // Load saved content
+            textarea.value = localStorage.getItem(`textarea${i + 1}`) || '';
+            // Save content on input
+            textarea.addEventListener('input', () => {
+                localStorage.setItem(`textarea${i + 1}`, textarea.value);
+            });
+            return textarea;
+        });
+        function clearSplits() {
+            splits.forEach(split => split.destroy());
+            splits = [];
+            // Remove textareas from their current parents
+            textareas.forEach(textarea => {
+                if (textarea.parentNode) {
+                    textarea.parentNode.removeChild(textarea);
+                }
+            });
         }
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-      });
-      const textarea1 = document.getElementById('textarea1');
-      const textarea2 = document.getElementById('textarea2');
-      const textarea3 = document.getElementById('textarea3');
-      textarea1.value = localStorage.getItem('textarea1') || '';
-      textarea2.value = localStorage.getItem('textarea2') || '';
-      textarea3.value = localStorage.getItem('textarea3') || '';
-      textarea1.addEventListener('input', () => {
-        localStorage.setItem('textarea1', textarea1.value);
-      });
-      textarea2.addEventListener('input', () => {
-        localStorage.setItem('textarea2', textarea2.value);
-      });
-      textarea3.addEventListener('input', () => {
-        localStorage.setItem('textarea3', textarea3.value);
-      });
+        function createSplitLayout(config) {
+            return () => {
+                const container = document.getElementById('split-container');
+                container.className = config.mainAxis;
+                container.innerHTML = '';
+
+                // Create split containers
+                const splitDivs = Array(config.count || 3).fill().map(() => {
+                    const div = document.createElement('div');
+                    div.className = 'split';
+                    return div;
+                });
+                if (!config.nested) {
+                    // Simple layouts
+                    splitDivs.forEach((div, i) => {
+                        if (i < config.count) {
+                            div.appendChild(textareas[i]);
+                            container.appendChild(div);
+                        }
+                    });
+                    if (config.count > 1) {
+                        splits.push(Split(splitDivs, {
+                            direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
+                            sizes: Array(config.count).fill(100/config.count),
+                            minSize: 0,
+                            gutterSize: 8
+                        }));
+                    }
+                } else {
+                    // Nested layouts
+                    const nestedContainer = document.createElement('div');
+                    nestedContainer.className = `split nested-container ${config.nestedAxis}`;
+                    const nested1 = document.createElement('div');
+                    const nested2 = document.createElement('div');
+                    nested1.className = 'split';
+                    nested2.className = 'split';
+                    if (config.nested === 'first') {
+                        nestedContainer.appendChild(nested1);
+                        nestedContainer.appendChild(nested2);
+                        nested1.appendChild(textareas[0]);
+                        nested2.appendChild(textareas[1]);
+                        container.appendChild(nestedContainer);
+                        container.appendChild(splitDivs[2]);
+                        splitDivs[2].appendChild(textareas[2]);
+                    } else {
+                        container.appendChild(splitDivs[0]);
+                        container.appendChild(nestedContainer);
+                        splitDivs[0].appendChild(textareas[0]);
+                        nested1.appendChild(textareas[1]);
+                        nested2.appendChild(textareas[2]);
+                        nestedContainer.appendChild(nested1);
+                        nestedContainer.appendChild(nested2);
+                    }
+                    splits.push(Split([nested1, nested2], {
+                        direction: config.nestedAxis === 'horizontal' ? 'horizontal' : 'vertical',
+                        sizes: [50, 50],
+                        minSize: 0,
+                        gutterSize: 8
+                    }));
+                    const topElements = config.nested === 'first' 
+                        ? [nestedContainer, splitDivs[2]]
+                        : [splitDivs[0], nestedContainer];
+                    splits.push(Split(topElements, {
+                        direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
+                        sizes: [50, 50],
+                        minSize: 0,
+                        gutterSize: 8
+                    }));
+                }
+            };
+        }
+        const layouts = [
+            createSplitLayout({ mainAxis: 'horizontal', count: 1 }),
+            createSplitLayout({ mainAxis: 'horizontal', count: 2 }),
+            createSplitLayout({ mainAxis: 'vertical', count: 2 }),
+            createSplitLayout({ mainAxis: 'horizontal', count: 3 }),
+            createSplitLayout({ mainAxis: 'vertical', count: 3 }),
+            createSplitLayout({ mainAxis: 'vertical', nested: 'second', nestedAxis: 'horizontal' }),
+            createSplitLayout({ mainAxis: 'horizontal', nested: 'second', nestedAxis: 'vertical' }),
+            createSplitLayout({ mainAxis: 'vertical', nested: 'first', nestedAxis: 'horizontal' }),
+            createSplitLayout({ mainAxis: 'horizontal', nested: 'first', nestedAxis: 'vertical' })
+        ];
+        document.getElementById('toggle-button').addEventListener('click', () => {
+            clearSplits();
+            currentLayout = (currentLayout + 1) % layouts.length;
+            layouts[currentLayout]();
+        });
+        // Initialize first layout
+        layouts[0]();
     </script>
-  </body>
+</body>
 </html>

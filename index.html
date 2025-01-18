@@ -134,7 +134,6 @@
             });
             return textarea;
         });
-
         function clearSplits() {
             splits.forEach(split => split.destroy());
             splits = [];
@@ -145,7 +144,6 @@
                 }
             });
         }
-
         function createSplitLayout(config) {
             return () => {
                 const container = document.getElementById('split-container');
@@ -158,7 +156,6 @@
                     div.className = 'split';
                     return div;
                 });
-
                 if (!config.nested) {
                     // Simple layouts
                     splitDivs.forEach((div, i) => {
@@ -167,7 +164,6 @@
                             container.appendChild(div);
                         }
                     });
-
                     if (config.count > 1) {
                         splits.push(Split(splitDivs, {
                             direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
@@ -180,12 +176,10 @@
                     // Nested layouts
                     const nestedContainer = document.createElement('div');
                     nestedContainer.className = `split nested-container ${config.nestedAxis}`;
-
                     const nested1 = document.createElement('div');
                     const nested2 = document.createElement('div');
                     nested1.className = 'split';
                     nested2.className = 'split';
-
                     if (config.nested === 'first') {
                         nestedContainer.appendChild(nested1);
                         nestedContainer.appendChild(nested2);
@@ -203,18 +197,15 @@
                         nestedContainer.appendChild(nested1);
                         nestedContainer.appendChild(nested2);
                     }
-
                     splits.push(Split([nested1, nested2], {
                         direction: config.nestedAxis === 'horizontal' ? 'horizontal' : 'vertical',
                         sizes: [50, 50],
                         minSize: 0,
                         gutterSize: 8
                     }));
-
                     const topElements = config.nested === 'first' 
                         ? [nestedContainer, splitDivs[2]]
                         : [splitDivs[0], nestedContainer];
-
                     splits.push(Split(topElements, {
                         direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
                         sizes: [50, 50],
@@ -224,7 +215,6 @@
                 }
             };
         }
-
         const layouts = [
             createSplitLayout({ mainAxis: 'horizontal', count: 1 }),
             createSplitLayout({ mainAxis: 'horizontal', count: 2 }),
@@ -236,13 +226,11 @@
             createSplitLayout({ mainAxis: 'vertical', nested: 'first', nestedAxis: 'horizontal' }),
             createSplitLayout({ mainAxis: 'horizontal', nested: 'first', nestedAxis: 'vertical' })
         ];
-
         document.getElementById('toggle-button').addEventListener('click', () => {
             clearSplits();
             currentLayout = (currentLayout + 1) % layouts.length;
             layouts[currentLayout]();
         });
-
         // Initialize first layout
         layouts[0]();
     </script>

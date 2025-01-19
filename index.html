@@ -88,12 +88,11 @@
             cursor: row-resize;
             height: 10px;
         }
-        #toggle-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+        button {
+            bottom: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
             border: none;
             border-radius: 50%;
             background-color: #fff;
@@ -106,12 +105,33 @@
             align-items: center;
             justify-content: center;
         }
-        #toggle-button:hover {
+        button:hover {
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        #toggle-button:active {
+        button:active {
             transform: scale(0.95);
+        }
+        .menu-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .settings-panel {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: none;
+        }
+        .settings-panel.visible {
+            display: block;
+        }
+        textarea {
+            font-size: var(--font-size, 14px);
+            padding: calc(var(--font-size) / 4);
         }
     </style>
 </head>
@@ -119,7 +139,17 @@
     <div id="container">
         <div id="split-container"></div>
     </div>
-    <button id="toggle-button">🔄</button>
+    <div class="menu-container">
+        <div id="settingsPanel" class="settings-panel">
+            <button onclick="toggleLayout()">🔄</button>
+            <div>
+                <button class="toggle" onclick="changeFontSize(-1)">➖</button>
+                <span id="fontSizeDisplay">14</span>
+                <button class="toggle" onclick="changeFontSize(1)">➕</button>
+            </div>
+        </div>
+        <button onclick="toggleMenu()">⚙️</button>
+    </div>
     <script>
         let currentLayout = 0;
         let splits = [];
@@ -226,13 +256,26 @@
             createSplitLayout({ mainAxis: 'vertical', nested: 'first', nestedAxis: 'horizontal' }),
             createSplitLayout({ mainAxis: 'horizontal', nested: 'first', nestedAxis: 'vertical' })
         ];
-        document.getElementById('toggle-button').addEventListener('click', () => {
+        function toggleLayout() {
             clearSplits();
             currentLayout = (currentLayout + 1) % layouts.length;
             layouts[currentLayout]();
-        });
-        // Initialize first layout
+        }
         layouts[0]();
+        let currentFontSize = parseInt(localStorage.getItem('fontSize')) || 14;
+        function toggleMenu() {
+            document.getElementById('settingsPanel').classList.toggle('visible');
+        }
+        function changeFontSize(delta) {
+            currentFontSize = Math.min(Math.max(2, currentFontSize + delta), 32);
+            localStorage.setItem('fontSize', currentFontSize);
+            document.getElementById('fontSizeDisplay').textContent = currentFontSize;
+            textareas.forEach(textarea => {
+                textarea.style.setProperty('--font-size', `${currentFontSize}px`);
+            });
+        }
+        // Initialize layout and font size
+        changeFontSize(0);
     </script>
 </body>
 </html>

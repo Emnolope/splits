@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta chaset="utf-8"/>
+    <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Icons and Colors -->
@@ -151,7 +151,8 @@
         <button onclick="toggleMenu()">⚙️</button>
     </div>
     <script>
-        let currentLayout = 0;
+        const savedState = loadLayoutState();
+        let currentLayout = savedState.currentLayout || 0;
         let splits = [];
         const textareas = Array(3).fill().map((_, i) => {
             const textarea = document.createElement('textarea');
@@ -199,7 +200,8 @@
                             direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
                             sizes: Array(config.count).fill(100/config.count),
                             minSize: 0,
-                            gutterSize: 8
+                            gutterSize: 8,
+                            onDragEnd: saveLayoutState
                         }));
                     }
                 } else {
@@ -231,7 +233,8 @@
                         direction: config.nestedAxis === 'horizontal' ? 'horizontal' : 'vertical',
                         sizes: [50, 50],
                         minSize: 0,
-                        gutterSize: 8
+                        gutterSize: 8,
+                        onDragEnd: saveLayoutState
                     }));
                     const topElements = config.nested === 'first' 
                         ? [nestedContainer, splitDivs[2]]
@@ -240,8 +243,14 @@
                         direction: config.mainAxis === 'horizontal' ? 'horizontal' : 'vertical',
                         sizes: [50, 50],
                         minSize: 0,
-                        gutterSize: 8
+                        gutterSize: 8,
+                        onDragEnd: saveLayoutState
                     }));
+                }
+                if (savedState.splits && savedState.splits.length === splits.length) {
+                    splits.forEach((split, i) => {
+                        split.setSizes(savedState.splits[i]);
+                    });
                 }
             };
         }
@@ -260,8 +269,24 @@
             clearSplits();
             currentLayout = (currentLayout + 1) % layouts.length;
             layouts[currentLayout]();
+            saveLayoutState();
         }
-        layouts[0]();
+        function saveLayoutState() {
+            const layoutState = {
+                currentLayout,
+                splits: splits.map(split => split.getSizes()),
+            };
+            localStorage.setItem('layoutState', JSON.stringify(layoutState));
+        }
+        function loadLayoutState() {
+            const savedState = localStorage.getItem('layoutState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                return state;
+            }
+            return { currentLayout: 0, splits: [] };
+        }
+        layouts[currentLayout]();
         let currentFontSize = parseInt(localStorage.getItem('fontSize')) || 14;
         function toggleMenu() {
             document.getElementById('settingsPanel').classList.toggle('visible');

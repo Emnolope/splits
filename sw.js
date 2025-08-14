@@ -75,6 +75,15 @@ self.addEventListener("fetch", event => {
 				return response || fetch(event.request).then(networkResponse => {
 					cache.put(event.request, networkResponse.clone());
 					return networkResponse;
+				}).catch(() => {
+					// Return a basic offline response for HTML requests
+					if (event.request.destination === 'document') {
+						return new Response('App is offline', { 
+							status: 200, 
+							headers: { 'Content-Type': 'text/plain' } 
+						});
+					}
+					throw new Error('Network unavailable');
 				});
 			})
 		})

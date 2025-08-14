@@ -1,11 +1,13 @@
 const cacheName = "cache1"; // Change value to force update
 
 self.addEventListener("install", event => {
+	console.log('SW INSTALL: Starting installation, cacheName:', cacheName);
 	// Kick out the old service worker
 	self.skipWaiting();
 
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
+			console.log('SW INSTALL: Cache opened, adding files...');
 			return cache.addAll([
 				"/",
 				"android-chrome-36x36.png", // Favicon, Android Chrome M39+ with 0.75 screen density
@@ -44,7 +46,12 @@ self.addEventListener("install", event => {
 				"safari-pinned-tab.svg", // Favicon, Safari pinned tab
 				"share.jpg", // Social media sharing
 				"style.css", // Main CSS file
-			]);
+			]).then(() => {
+				console.log('SW INSTALL: All files cached successfully');
+			}).catch(error => {
+				console.log('SW INSTALL ERROR:', error.message);
+				throw error;
+			});
 		})
 	);
 });
@@ -69,23 +76,41 @@ self.addEventListener("activate", event => {
 // If there's a cached version available, use it, but fetch an update for next time.
 // Gets data on screen as quickly as possible, then updates once the network has returned the latest data. 
 self.addEventListener("fetch", event => {
+	console.log('SW FETCH:', event.request.url, 'Method:', event.request.method, 'Destination:', event.request.destination);
+	
 	event.respondWith(
 		caches.open(cacheName).then(cache => {
+			console.log('SW: Cache opened:', cacheName);
 			return cache.match(event.request).then(response => {
-				return response || fetch(event.request).then(networkResponse => {
-					cache.put(event.request, networkResponse.clone());
-					return networkResponse;
-				}).catch(() => {
-					// Return a basic offline response for HTML requests
-					if (event.request.destination === 'document') {
-						return new Response('App is offline', { 
-							status: 200, 
-							headers: { 'Content-Type': 'text/plain' } 
-						});
-					}
-					throw new Error('Network unavailable');
-				});
-			})
+				if (response) {
+					console.log('SW CACHE HIT:', event.request.url);
+					return response;
+				} else {
+					console.log('SW CACHE MISS:', event.request.url);
+					return fetch(event.request).then(networkResponse => {
+						console.log('SW NETWORK SUCCESS:', event.request.url, 'Status:', networkResponse.status);
+						cache.put(event.request, networkResponse.clone());
+						return networkResponse;
+					}).catch(error => {
+						console.log('SW NETWORK FAIL:', event.request.url, 'Error:', error.message);
+						// Return a basic offline response for HTML requests
+						if (event.request.destination === 'document') {
+							console.log('SW: Returning offline fallback for document');
+							return new Response('App is offline', { 
+								status: 200, 
+								headers: { 'Content-Type': 'text/plain' } 
+							});
+						}
+						throw new Error('Network unavailable');
+					});
+				}
+			}).catch(error => {
+				console.log('SW CACHE ERROR:', event.request.url, 'Error:', error.message);
+				throw error;
+			});
+		}).catch(error => {
+			console.log('SW CACHE OPEN ERROR:', error.message);
+			throw error;
 		})
 	);
 });
